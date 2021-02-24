@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  backend:
+    build: ./backend
+    container_name: "farm-auth-api"
+    ports:
+      - "8000:8000"
+    environment:
+      DB_URL: "mongodb://demo:farm@database:27017/farm-auth-demo"
+      DB_NAME: "farm-auth-demo"
+      JWT_SECRET_KEY: "${SECRET_KEY}"
+      REALM_APP_ID: farm-demo.com
+    restart: always
+    depends_on:
+      - "database"
+  database:
+    image: "mongo"
+    container_name: "farm-auth-db"
+    restart: always
+    volumes:
+      - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: demo
+      MONGO_INITDB_ROOT_PASSWORD: farm
+      MONGO_INITDB_DATABASE: farm-auth-demo
